@@ -8,8 +8,10 @@ The original LICENSE.txt is included in the installed skill. The source commit
 and original file digests are recorded in upstream.lock.json.
 
 The generated SKILL.md has one marked Open Managed Agents deployment addition.
-The original skill name, description and other frontmatter are unchanged.
+The published name, discovery description and title identify OMA API.
+Markdown skill invocation examples use /oma-api; SDK paths are unchanged.
+The original entrypoint prefix is recorded in upstream.lock.json for restoration.
 oma/deployment.md is an additional deployment reference maintained by superduck-ai.
-Other upstream files retain their original contents.
+Other upstream content, including tool definitions and workflows, is unchanged.
 
 The OMA additions and maintenance tooling are distributed under Apache-2.0.

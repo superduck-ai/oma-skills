@@ -1,6 +1,6 @@
 # Model Migration Guide
 
-> **If you arrived via `/claude-api migrate`:** this is the right file. Execute the steps below in order - do not summarize them back to the user. Start with Step 0 (confirm scope) before touching any file.
+> **If you arrived via `/oma-api migrate`:** this is the right file. Execute the steps below in order - do not summarize them back to the user. Start with Step 0 (confirm scope) before touching any file.
 
 How to move existing code to newer Claude models. Covers breaking changes, deprecated parameters, and drop-in replacements for retired models.
 
@@ -468,7 +468,7 @@ Each Haiku generation from 4.5 on has its own rate-limit pool, separate from Hai
 
 ## Prompt-Behavior Changes (Opus 4.5 / 4.6, Sonnet 4.6)
 
-These don't break your code, but prompts that worked on 4.5-and-earlier may over- or under-trigger on 4.6. Tune as needed. For a standing, model-general audit of dated prompt text beyond this migration - skills and tool descriptions included - read `shared/prompt-audit.md` (or invoke `/claude-api prompt-audit`).
+These don't break your code, but prompts that worked on 4.5-and-earlier may over- or under-trigger on 4.6. Tune as needed. For a standing, model-general audit of dated prompt text beyond this migration - skills and tool descriptions included - read `shared/prompt-audit.md` (or invoke `/oma-api prompt-audit`).
 
 **1. Aggressive instructions cause overtriggering.** Opus 4.5 and 4.6 follow the system prompt much more closely than earlier models. Prompts written to *overcome* the old reluctance are now too aggressive:
 

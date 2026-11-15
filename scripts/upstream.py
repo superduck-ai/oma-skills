@@ -15,6 +15,12 @@ import urllib.request
 
 REPOSITORY = "anthropics/skills"
 SUBTREE = "skills/claude-api"
+DISTRIBUTION = "skills/oma-api"
+IDENTITY = {
+    "name": "oma-api",
+    "description": "Build and migrate applications on Open Managed Agents (OMA), using the upstream Claude API and Managed Agents workflows, tools, and Anthropic SDKs. Use for OMA API integration, managed-agents onboarding, sessions, tools, files, streaming, and deployment configuration. An existing non-Anthropic provider does not exclude an explicitly requested OMA migration.",
+    "heading": "# Building Applications with OMA API\n",
+}
 BEGIN = b"<!-- BEGIN OMA DEPLOYMENT ADAPTER -->"
 END = b"<!-- END OMA DEPLOYMENT ADAPTER -->"
 MAX_ARCHIVE = 128 * 1024 * 1024
@@ -105,23 +111,48 @@ def insertion(root):
     return b"\n" + overlay + b"\n"
 
 
-def compose(root, source):
-    files = dict(source)
-    skill, mode = files["SKILL.md"]
-    if BEGIN in skill or END in skill:
-        raise Invalid("upstream contains reserved OMA markers")
+def entrypoint_prefix(skill):
     heading = re.match(rb"\A---\r?\n.*?\r?\n---\r?\n.*?^# [^\r\n]+\r?\n", skill, re.S | re.M)
     if not heading:
         raise Invalid("upstream must contain frontmatter followed by an H1")
+    return heading.group()
+
+
+def branded_prefix(prefix):
+    metadata, rest = prefix.split(b"\n---", 1)
+    metadata, names = re.subn(rb"^name: [^\r\n]+$", b"name: " + IDENTITY["name"].encode(), metadata, flags=re.M)
+    metadata, descriptions = re.subn(rb"^description: [^\n]*(?:\n[ \t]+[^\n]*)*", b"description: " + IDENTITY["description"].encode(), metadata, flags=re.M)
+    if names != 1 or descriptions != 1:
+        raise Invalid("upstream must contain one name and description")
+    rest = re.sub(rb"^# [^\r\n]+\r?\n", IDENTITY["heading"].encode(), rest, flags=re.M)
+    return metadata + b"\n---" + rest
+
+
+def rename_invocations(files, original, renamed):
+    result = dict(files)
+    pattern = rb"`/" + original + rb"(?=[ `>])"
+    for name, (data, mode) in files.items():
+        if name.endswith(".md"):
+            result[name] = (re.sub(pattern, b"`/" + renamed, data), mode)
+    return result
+
+
+def compose(root, source):
+    if any(b"`/oma-api" in data for name, (data, _) in source.items() if name.endswith(".md")):
+        raise Invalid("upstream contains reserved OMA invocation names")
+    files = rename_invocations(source, b"claude-api", b"oma-api")
+    skill, mode = files["SKILL.md"]
+    if BEGIN in skill or END in skill:
+        raise Invalid("upstream contains reserved OMA markers")
+    prefix = entrypoint_prefix(skill)
     if "oma/deployment.md" in files:
         raise Invalid("upstream collides with the deployment overlay")
-    position = heading.end()
-    files["SKILL.md"] = (skill[:position] + insertion(root) + skill[position:], mode)
+    files["SKILL.md"] = (branded_prefix(prefix) + insertion(root) + skill[len(prefix):], mode)
     files["oma/deployment.md"] = ((root / "overlays/deployment.md").read_bytes(), 0o644)
     return files
 
 
-def restore(files):
+def restore(files, original_prefix):
     source = dict(files)
     source.pop("oma/deployment.md", None)
     skill, mode = source["SKILL.md"]
@@ -131,8 +162,10 @@ def restore(files):
         raise Invalid("generated skill has invalid OMA markers")
     left, rest = skill.split(start, 1)
     _, right = rest.split(finish, 1)
-    source["SKILL.md"] = (left + right, mode)
-    return source
+    skill = left + right
+    prefix = entrypoint_prefix(skill)
+    source["SKILL.md"] = (original_prefix.encode() + skill[len(prefix):], mode)
+    return rename_invocations(source, b"oma-api", b"claude-api")
 
 
 def load_lock(root):
@@ -153,14 +186,15 @@ def require_manifest(files, expected, label):
 def current_distribution(root, lock):
     if (root / "skills").is_symlink():
         raise Invalid("skills directory must not be a symlink")
-    files = read_tree(root / SUBTREE)
+    files = read_tree(root / DISTRIBUTION)
     require_manifest(files, lock["distribution"], "generated distribution (manual edits are not overwritten)")
     return files
 
 
 def make_lock(commit, source, files):
     return {"schema": 1, "repository": REPOSITORY, "subtree": SUBTREE,
-            "commit": commit, "archive_url": archive_url(commit),
+            "commit": commit, "archive_url": archive_url(commit), "distribution_path": DISTRIBUTION,
+            "source_entrypoint": entrypoint_prefix(source["SKILL.md"][0]).decode(),
             "license": {"path": "LICENSE.txt", "url": f"https://github.com/{REPOSITORY}/blob/{commit}/{SUBTREE}/LICENSE.txt"},
             "source": inventory(source), "distribution": inventory(files)}
 
@@ -168,7 +202,7 @@ def make_lock(commit, source, files):
 def check(root, archive=None, online=False):
     lock = load_lock(root)
     files = current_distribution(root, lock)
-    source = restore(files)
+    source = restore(files, lock["source_entrypoint"])
     require_manifest(source, lock["source"], "restored upstream source")
     if compose(root, source) != files:
         raise Invalid("overlays changed; run sync to rebuild the distribution")
@@ -185,7 +219,7 @@ def sync(root, commit, archive=None):
     commit_sha(commit)
     if (root / "skills").is_symlink():
         raise Invalid("skills directory must not be a symlink")
-    target = root / SUBTREE
+    target = root / DISTRIBUTION
     lock_path = root / "upstream.lock.json"
     if lock_path.exists():
         current_distribution(root, load_lock(root))

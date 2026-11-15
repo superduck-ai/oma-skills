@@ -50,20 +50,20 @@ class UpstreamTests(unittest.TestCase):
         return upstream.sync(self.root, COMMIT, self.archive)
 
     def snapshot(self):
-        return (upstream.read_tree(self.root / upstream.SUBTREE), (self.root / "upstream.lock.json").read_bytes())
+        return (upstream.read_tree(self.root / upstream.DISTRIBUTION), (self.root / "upstream.lock.json").read_bytes())
 
     def test_rejects_short_sha_before_mutation_or_network(self):
         with patch.object(upstream, "download") as download:
             with self.assertRaises(upstream.Invalid):
                 upstream.sync(self.root, "aaaaaaa")
         download.assert_not_called()
-        self.assertFalse((self.root / upstream.SUBTREE).exists())
+        self.assertFalse((self.root / upstream.DISTRIBUTION).exists())
 
     def test_detects_tampered_missing_and_extra_files(self):
         for kind in ("tamper", "missing", "extra", "mode", "symlink"):
             with self.subTest(kind=kind):
                 self.sync()
-                target = self.root / upstream.SUBTREE / "references/tools.md"
+                target = self.root / upstream.DISTRIBUTION / "references/tools.md"
                 if kind == "tamper":
                     target.write_bytes(b"changed")
                 elif kind == "missing":
@@ -86,7 +86,7 @@ class UpstreamTests(unittest.TestCase):
                     target.chmod(0o644)
 
     def test_rejects_untracked_output(self):
-        target = self.root / upstream.SUBTREE
+        target = self.root / upstream.DISTRIBUTION
         target.mkdir(parents=True)
         (target / "manual.md").write_bytes(b"manual")
         with self.assertRaises(upstream.Invalid):
@@ -179,28 +179,29 @@ class UpstreamTests(unittest.TestCase):
 
     def test_authoritative_check_does_not_trust_rewritten_local_hashes(self):
         self.sync()
-        target = self.root / upstream.SUBTREE / "references/tools.md"
+        target = self.root / upstream.DISTRIBUTION / "references/tools.md"
         target.write_bytes(b"edited upstream")
         lock_path = self.root / "upstream.lock.json"
         lock = json.loads(lock_path.read_text())
-        distribution = upstream.read_tree(self.root / upstream.SUBTREE)
+        distribution = upstream.read_tree(self.root / upstream.DISTRIBUTION)
         lock["distribution"] = upstream.inventory(distribution)
-        lock["source"] = upstream.inventory(upstream.restore(distribution))
+        lock["source"] = upstream.inventory(upstream.restore(distribution, lock["source_entrypoint"]))
         lock_path.write_text(json.dumps(lock))
         upstream.check(self.root)
         with self.assertRaisesRegex(upstream.Invalid, "authoritative"):
             upstream.check(self.root, archive=self.archive)
 
-    def test_composition_preserves_official_bytes_modes_and_frontmatter(self):
+    def test_composition_preserves_source_and_exposes_oma_identity(self):
         lock = self.sync()
-        files = upstream.read_tree(self.root / upstream.SUBTREE)
-        self.assertEqual(upstream.restore(files), SOURCE)
+        files = upstream.read_tree(self.root / upstream.DISTRIBUTION)
+        self.assertEqual(upstream.restore(files, lock["source_entrypoint"]), SOURCE)
         for name, value in SOURCE.items():
             if name != "SKILL.md":
                 self.assertEqual(files[name], value)
-        original_frontmatter = SKILL.split(b"---", 2)[:2]
-        self.assertEqual(files["SKILL.md"][0].split(b"---", 2)[:2], original_frontmatter)
-        self.assertTrue(files["SKILL.md"][0].startswith(SKILL[:SKILL.index(b"# Claude API\n") + len(b"# Claude API\n")]))
+        self.assertIn(b"name: oma-api\n", files["SKILL.md"][0])
+        self.assertIn(upstream.IDENTITY["description"].encode(), files["SKILL.md"][0])
+        self.assertIn(upstream.IDENTITY["heading"].encode(), files["SKILL.md"][0])
+        self.assertNotIn(b"name: claude-api\n", files["SKILL.md"][0])
         self.assertEqual(lock["source"], upstream.inventory(SOURCE))
         self.assertEqual(upstream.check(self.root, archive=self.archive), lock)
 
@@ -212,11 +213,31 @@ class UpstreamTests(unittest.TestCase):
         replace.assert_not_called()
         self.assertEqual(self.snapshot(), previous)
 
+    def test_renames_command_examples_without_changing_sdk_paths(self):
+        files = dict(SOURCE)
+        guide = b'Use `/claude-api managed-agents-onboard` or `/claude-api`. Read `python/claude-api/README.md` and https://example.com/claude-api/docs.\n'
+        files["references/tools.md"] = (guide, 0o644)
+        self.archive.write_bytes(archive_bytes(files))
+        lock = self.sync()
+        generated = upstream.read_tree(self.root / upstream.DISTRIBUTION)
+        self.assertEqual(generated["references/tools.md"][0], guide.replace(b"`/claude-api", b"`/oma-api"))
+        self.assertEqual(upstream.restore(generated, lock["source_entrypoint"]), files)
+        upstream.check(self.root, archive=self.archive)
+
+    def test_identity_changes_require_rebuild_and_keep_source_intact(self):
+        self.sync()
+        with patch.dict(upstream.IDENTITY, {"description": "Updated OMA description"}):
+            with self.assertRaisesRegex(upstream.Invalid, "overlays changed"):
+                upstream.check(self.root)
+            lock = self.sync()
+            upstream.check(self.root, archive=self.archive)
+            self.assertEqual(upstream.restore(upstream.read_tree(self.root / upstream.DISTRIBUTION), lock["source_entrypoint"]), SOURCE)
+
     def test_archive_permissions_round_trip_through_git_modes(self):
         files = {name: (data, mode | 0o020) for name, (data, mode) in SOURCE.items()}
         self.archive.write_bytes(archive_bytes(files))
         self.sync()
-        self.assertEqual(upstream.restore(upstream.read_tree(self.root / upstream.SUBTREE)), SOURCE)
+        self.assertEqual(upstream.restore(upstream.read_tree(self.root / upstream.DISTRIBUTION), upstream.load_lock(self.root)["source_entrypoint"]), SOURCE)
         upstream.check(self.root, archive=self.archive)
 
     def test_overlay_changes_require_rebuild_and_keep_source_intact(self):
@@ -227,8 +248,9 @@ class UpstreamTests(unittest.TestCase):
             upstream.check(self.root)
         self.sync()
         upstream.check(self.root, archive=self.archive)
-        files = upstream.read_tree(self.root / upstream.SUBTREE)
-        self.assertEqual(upstream.restore(files), SOURCE)
+        files = upstream.read_tree(self.root / upstream.DISTRIBUTION)
+        lock = upstream.load_lock(self.root)
+        self.assertEqual(upstream.restore(files, lock["source_entrypoint"]), SOURCE)
         self.assertIn(self.entrypoint.read_bytes(), files["SKILL.md"][0])
         self.assertEqual(files["oma/deployment.md"][0], b"Updated configuration.\n")
 

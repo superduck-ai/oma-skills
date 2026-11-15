@@ -1,13 +1,10 @@
 ---
-name: claude-api
-description: |-
-  Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token counting, model migration.
-  TRIGGER — read BEFORE opening the target file; don't skip because it "looks like a one-liner" — whenever: the prompt names Claude/Anthropic in any form (Claude, Anthropic, Fable, Opus, Sonnet, Haiku, `anthropic`, `@anthropic-ai`, `claude-*`, `us.anthropic.*`, `[1m]`); the user asks about an LLM (pricing/model choice/limits/caching) — never answer from memory; OR the task is LLM-shaped with provider unstated (agent/MCP/tool-definition/multi-agent/RAG/LLM-judge/computer-use; generate/summarize/extract/classify/rewrite/converse over NL; debugging refusals/cutoffs/streaming/tool-calls/tokens).
-  SKIP only when another provider is being worked on (overrides all triggers): OpenAI/GPT/Gemini/Llama/Mistral/Cohere/Ollama named in the query; OR `grep -rE 'openai|langchain_openai|google.generativeai|genai|mistralai|cohere|ollama'` over the project hits (run this grep FIRST if no provider named — don't Read the file).
+name: oma-api
+description: Build and migrate applications on Open Managed Agents (OMA), using the upstream Claude API and Managed Agents workflows, tools, and Anthropic SDKs. Use for OMA API integration, managed-agents onboarding, sessions, tools, files, streaming, and deployment configuration. An existing non-Anthropic provider does not exclude an explicitly requested OMA migration.
 license: Complete terms in LICENSE.txt
 ---
 
-# Building LLM-Powered Applications with Claude
+# Building Applications with OMA API
 
 <!-- BEGIN OMA DEPLOYMENT ADAPTER -->
 ## Open Managed Agents deployment
@@ -61,7 +58,7 @@ The `{lang}/` files in this skill are authoritative over recalled patterns.
 
 ## Subcommands
 
-If the User Request at the bottom of this prompt is a bare subcommand string (no prose), search every **Subcommands** table in this document - including any in sections appended below - and follow the matching Action column directly. This lets users invoke specific flows via `/claude-api <subcommand>`. If no table in the document matches, treat the request as normal prose.
+If the User Request at the bottom of this prompt is a bare subcommand string (no prose), search every **Subcommands** table in this document - including any in sections appended below - and follow the matching Action column directly. This lets users invoke specific flows via `/oma-api <subcommand>`. If no table in the document matches, treat the request as normal prose.
 
 | Subcommand | Action |
 |---|---|
@@ -432,7 +429,7 @@ Availability: `shared/platform-availability.md`. For agents on Bedrock / Vertex 
 
 **Beta headers:** `managed-agents-2026-04-01` - the SDK sets this automatically for all `client.beta.{agents,environments,sessions,vaults,deployments,deployment_runs}.*` calls. Memory stores use `agent-memory-2026-07-22` instead, which the SDK sets on `client.beta.memory_stores.*` calls; sending both headers on a memory store request returns a 400. Files API and Skills API are out of beta - no beta header needed (see the API Drift table above for the migration guides).
 
-**Subcommands** - invoke directly with `/claude-api <subcommand>`:
+**Subcommands** - invoke directly with `/oma-api <subcommand>`:
 
 | Subcommand | Action |
 |---|---|

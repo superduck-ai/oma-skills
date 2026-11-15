@@ -1,6 +1,6 @@
 # Hill-Climbing on an Eval
 
-> **If you arrived via `/claude-api hillclimb`:** this is the right file. Work through the steps in order - Steps 0 and 0.5 are hard prerequisites; Steps 1-2 feed the plan sign-off you need before the loop starts. Don't summarize this guide; execute it.
+> **If you arrived via `/oma-api hillclimb`:** this is the right file. Work through the steps in order - Steps 0 and 0.5 are hard prerequisites; Steps 1-2 feed the plan sign-off you need before the loop starts. Don't summarize this guide; execute it.
 
 This guide is for iteratively improving a Claude-powered app against a fixed eval: run the eval, read the failures, change something in the codebase, run again, and repeat until the score stops moving or the budget runs out. It picks up where eval-building leaves off - the user has a way to measure; now they want to move a number: usually the quality score up, but just as often cost or latency down while quality holds.
 
@@ -22,7 +22,7 @@ Ask the user:
 
 If yes, ask for the command and where it writes its per-case results. Also ask whether the runner retries failed cases - and if so, which attempt's grade, transcript, and usage land in the results; score strict per attempt (a case that passed only on retry is a fail unless the user decides otherwise) and make sure retry attempts show up in cost accounting rather than being silently absorbed. Make sure the eval measures the outcome you're trying to improve, not just a behavior you assume correlates with it. If you're using a behavioral proxy because the real outcome is too expensive to measure every round, say so up front and run the winner on the real eval once at the end. **Each eval run must capture, per case: the full transcript, `model`, `usage` (input/output/cache token counts), and the grade dict** - not just an aggregate score. The transcript and the score for a case must come from the *same* model call; don't re-run the model separately to collect a transcript and then grade a different sample. Search the user's codebase for an existing runner or wrapper for this eval that already persists those fields before building anything new. Run it once to confirm it works and see the output shape (or work from a recent results file if one's handy). Then **read `shared/evals/eval-audit.md` and run it against the eval** - cases, runner, grader - reporting per its §6; an eval that wasn't built by `build-eval` hasn't had these checks, and Step 0.5 below is the must-pass subset, not the whole list.
 
-If no, **stop here**. Hill-climbing without an eval is just editing and hoping. Route the user to `/claude-api build-eval` (read `shared/evals/build-eval.md` and run that flow), and come back when there's a script and a baseline number.
+If no, **stop here**. Hill-climbing without an eval is just editing and hoping. Route the user to `/oma-api build-eval` (read `shared/evals/build-eval.md` and run that flow), and come back when there's a script and a baseline number.
 
 If the reason for hill-climbing is a model migration - the user wants to move to a newer Claude model and tune their prompts for it - read `shared/model-migration.md` alongside this guide so your proposed changes account for the new model's breaking changes and behavioral shifts.
 
