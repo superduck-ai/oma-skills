@@ -1,0 +1,15 @@
+OMA skills
+Published by superduck-ai.
+
+This distribution includes the Claude API skill from anthropics/skills:
+https://github.com/anthropics/skills (skills/claude-api)
+
+The original LICENSE.txt is included in the installed skill. The source commit
+and original file digests are recorded in upstream.lock.json.
+
+The generated SKILL.md has one marked Open Managed Agents deployment addition.
+The original skill name, description and other frontmatter are unchanged.
+oma/deployment.md is an additional deployment reference maintained by superduck-ai.
+Other upstream files retain their original contents.
+
+The OMA additions and maintenance tooling are distributed under Apache-2.0.

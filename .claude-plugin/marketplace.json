@@ -1,0 +1,21 @@
+{
+  "name": "superduck-agent-skills",
+  "owner": {
+    "name": "superduck-ai"
+  },
+  "metadata": {
+    "description": "Official Claude API skill with Open Managed Agents deployment configuration",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "claude-api",
+      "description": "Claude API and SDK documentation skill for building LLM-powered applications",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/claude-api"
+      ]
+    }
+  ]
+}
