@@ -8,7 +8,7 @@
     },
     "SKILL.md": {
       "mode": 420,
-      "sha256": "287c913e4262e010312ecc93d136d32ef11942b9ae63336f8e306c494ac5bba9"
+      "sha256": "cb6c4eb7ad6c197b82d3ab2e32eb231bf88516182834c07f2dc75619396d63dc"
     },
     "csharp/claude-api/README.md": {
       "mode": 420,
@@ -108,7 +108,7 @@
     },
     "python/claude-api/README.md": {
       "mode": 420,
-      "sha256": "284fbc6408809afd27288da95c5fb32daa48bd77518cd5fd4e973cc05363eaa8"
+      "sha256": "f582f6158795848b208145568cc809ffe7de61222716f46c9e49c4aeb05f0b9c"
     },
     "python/claude-api/batches.md": {
       "mode": 420,
@@ -120,7 +120,7 @@
     },
     "python/claude-api/sdk-upgrade.md": {
       "mode": 420,
-      "sha256": "f7c5651b21dd6fd5651935415d907fa0a369736f3055d50edb3d236ea016527c"
+      "sha256": "bec0be51dca8b4c140c6aa35bdd27fcb2cc1d498f98e28d58b8be54bfa9a74db"
     },
     "python/claude-api/streaming.md": {
       "mode": 420,
@@ -168,7 +168,7 @@
     },
     "shared/cost-optimization.md": {
       "mode": 420,
-      "sha256": "d0107a954e9059f43c0aaac07ac1f8a9f5aa0a898834d3d983d623e5976e051b"
+      "sha256": "65a11d5d55798497ed97304cf1a82e2cab0d170c33607bb53f0615e34df30be9"
     },
     "shared/error-codes.md": {
       "mode": 420,
@@ -176,7 +176,7 @@
     },
     "shared/evals/build-eval.md": {
       "mode": 420,
-      "sha256": "c8f6ae960867f6b3b35557aec75361553888ae7168f268365444bf6a4e09a5d7"
+      "sha256": "48a03da054c4bdd7e95354472cc1696bbf5c61a96906acc349af1f2bba77a33f"
     },
     "shared/evals/cost-hillclimb.md": {
       "mode": 420,
@@ -188,7 +188,7 @@
     },
     "shared/evals/eval-hillclimb.md": {
       "mode": 420,
-      "sha256": "315ae8540ebaeb9f1d7de5efa49625e6137ead255dc3a545b63393df89375588"
+      "sha256": "215c48d8ffb72c156b336b7f47f592d3abca1419820c3844626d8d0fc7ff1846"
     },
     "shared/evals/report/SCHEMA.md": {
       "mode": 420,
@@ -236,15 +236,15 @@
     },
     "shared/managed-agents-onboarding-from-quickstart.md": {
       "mode": 420,
-      "sha256": "e37628c5639786a7868acfed4be0e25678b69b7d13a9aced03d74deebe042342"
+      "sha256": "77f7a2b57d38be64938ccf0ff9bb2c7f5fd1e2417e90cfe2756d08e969ddf52e"
     },
     "shared/managed-agents-onboarding-from-url.md": {
       "mode": 420,
-      "sha256": "b6c49289186d7cc521c995ba88fa916b65433101b2b3e9bf3c9add94ad87fa34"
+      "sha256": "06f6918c4838144d6f0a451e5130d476e785af0d3e1ad24abca8b4e75cee2237"
     },
     "shared/managed-agents-onboarding.md": {
       "mode": 420,
-      "sha256": "025683a9ee3db081d8a6978980349ce68d1df316d0c5aea31ae12438907208c9"
+      "sha256": "06881d41fb55122b38254b8466009a0da6868d844c4a88d8b651776018f11636"
     },
     "shared/managed-agents-outcomes.md": {
       "mode": 420,
@@ -324,7 +324,7 @@
     },
     "shared/model-migration.md": {
       "mode": 420,
-      "sha256": "b4fe96362b865a28726ab877c966624d5bfc2f86ff9b34940a34e3f8b6fc034e"
+      "sha256": "c42c7b1da9850bbc445d679a499afaa7fe1d681fe7b34877af7b678c9d80a096"
     },
     "shared/models.md": {
       "mode": 420,
@@ -336,7 +336,7 @@
     },
     "shared/preserved-thinking-migration.md": {
       "mode": 420,
-      "sha256": "29921d69fa8dc7e450e7bb793c9f59ae755262ccc933a52eb7116c207defb34c"
+      "sha256": "bfff443d106612bbd2d37c186b4bda0e407d330683739fb0ea42ffd2360e1e53"
     },
     "shared/preserved-thinking-migration/causes.md": {
       "mode": 420,
@@ -352,7 +352,7 @@
     },
     "shared/prompt-audit.md": {
       "mode": 420,
-      "sha256": "1a50ec950f9c11bb4ad1a5032a26bb20cd52c9d358adf6add2cb1ceb1aaf6cc9"
+      "sha256": "3a004dd6159bab845a258cef519f861343f77e285dfdccf13c25c0dbddee4371"
     },
     "shared/prompt-caching.md": {
       "mode": 420,
@@ -391,6 +391,7 @@
       "sha256": "5daf6b0c6a443e1ae720b0a7343e061ebdbaeb751dd674f37f9abf9d12efc66f"
     }
   },
+  "distribution_path": "skills/oma-api",
   "license": {
     "path": "LICENSE.txt",
     "url": "https://github.com/anthropics/skills/blob/1780c5e5a552fd4d1c9d6a7b0cab26b0c2bef064/skills/claude-api/LICENSE.txt"
@@ -783,5 +784,6 @@
       "sha256": "5daf6b0c6a443e1ae720b0a7343e061ebdbaeb751dd674f37f9abf9d12efc66f"
     }
   },
+  "source_entrypoint": "---\nname: claude-api\ndescription: |-\n  Reference for the Claude API / Anthropic SDK \u2014 model ids, pricing, params, streaming, tool use, MCP, agents, caching, token counting, model migration.\n  TRIGGER \u2014 read BEFORE opening the target file; don't skip because it \"looks like a one-liner\" \u2014 whenever: the prompt names Claude/Anthropic in any form (Claude, Anthropic, Fable, Opus, Sonnet, Haiku, `anthropic`, `@anthropic-ai`, `claude-*`, `us.anthropic.*`, `[1m]`); the user asks about an LLM (pricing/model choice/limits/caching) \u2014 never answer from memory; OR the task is LLM-shaped with provider unstated (agent/MCP/tool-definition/multi-agent/RAG/LLM-judge/computer-use; generate/summarize/extract/classify/rewrite/converse over NL; debugging refusals/cutoffs/streaming/tool-calls/tokens).\n  SKIP only when another provider is being worked on (overrides all triggers): OpenAI/GPT/Gemini/Llama/Mistral/Cohere/Ollama named in the query; OR `grep -rE 'openai|langchain_openai|google.generativeai|genai|mistralai|cohere|ollama'` over the project hits (run this grep FIRST if no provider named \u2014 don't Read the file).\nlicense: Complete terms in LICENSE.txt\n---\n\n# Building LLM-Powered Applications with Claude\n",
   "subtree": "skills/claude-api"
 }

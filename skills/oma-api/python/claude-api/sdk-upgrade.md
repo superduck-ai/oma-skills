@@ -1,6 +1,6 @@
 # Upgrading the `anthropic` Python SDK: 0.x -> 1.x
 
-> **If you arrived via `/claude-api upgrade`:** this is the right file. Execute the steps below in order - do not summarize them back to the user. Start with Step 0 before touching any file.
+> **If you arrived via `/oma-api upgrade`:** this is the right file. Execute the steps below in order - do not summarize them back to the user. Start with Step 0 before touching any file.
 
 `anthropic` 1.x is deliberately a small step from the last 0.x release: no method was restructured and no new pattern is required. Long-deprecated surface was removed, the HTTP layer moved from `httpx` to its maintained fork `httpx2`, and the minimum Python version is now 3.10. Almost every required edit is mechanical, and a type checker flags nearly all of them once 1.x is installed - which makes `pyright` / `mypy` output a good cross-check for the inventory below.
 
@@ -169,7 +169,7 @@ message = client.messages.create(
 print("".join(block.text for block in message.content if block.type == "text"))
 ```
 
-**[DECIDE] The model.** Code still on Text Completions usually pins a retired model (`claude-2.x`, `claude-instant-*`), which 404s regardless of SDK version. Keep a model that is still served; otherwise switch to `claude-opus-5-5` so the code runs, say so prominently in the report, and point the user at `/claude-api migrate` for validating prompts against the new model - a completions-era prompt is exactly what `shared/prompt-audit.md` exists for.
+**[DECIDE] The model.** Code still on Text Completions usually pins a retired model (`claude-2.x`, `claude-instant-*`), which 404s regardless of SDK version. Keep a model that is still served; otherwise switch to `claude-opus-5-5` so the code runs, say so prominently in the report, and point the user at `/oma-api migrate` for validating prompts against the new model - a completions-era prompt is exactly what `shared/prompt-audit.md` exists for.
 
 ## Step 6: Removed request parameters
 

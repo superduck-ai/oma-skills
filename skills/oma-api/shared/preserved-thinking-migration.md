@@ -1,6 +1,6 @@
 # Preserved Thinking - Keeping Earlier Reasoning Valid Across a Conversation
 
-> **If you arrived via `/claude-api preserved-thinking-migration` (or opened this file directly):** this is the right file. Execute the steps below in order rather than summarizing the guide back to the user - presenting the break profile, the ranked causes, and the measured result of each fix IS part of the execution. Start with Step 0 (scope, quality bar, baseline) and finish with Step 4's two deliverables: the break profile and the changes.
+> **If you arrived via `/oma-api preserved-thinking-migration` (or opened this file directly):** this is the right file. Execute the steps below in order rather than summarizing the guide back to the user - presenting the break profile, the ranked causes, and the measured result of each fix IS part of the execution. Start with Step 0 (scope, quality bar, baseline) and finish with Step 4's two deliverables: the break profile and the changes.
 
 Preserved thinking is measured in units of **conversations that keep their reasoning, not requests that pass**. One edit to an earlier turn invalidates every thinking block after it, and the same stale block fails again on every later request that replays it - so a per-request count overstates the damage and a per-conversation count (did this conversation break, and at which turn) is the number that tells you whether a fix worked.
 

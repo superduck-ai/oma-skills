@@ -1,6 +1,6 @@
 # Managed Agents - Onboarding From a Bundled Quickstart
 
-> **Invoked via `/claude-api managed-agents-onboard <quickstart-name>`?** You're in the right place. The name is one of the templates on the Console's quickstart page, kept one per file in `shared/managed-agents-quickstarts/`. This flow builds the same agent, asks what the Console asks, in the same order, and does it with files under `agents/` and the `ant` CLI. A URL after the subcommand -> `shared/managed-agents-onboarding-from-url.md`. Nothing, or a description that fits no template -> `shared/managed-agents-onboarding.md`.
+> **Invoked via `/oma-api managed-agents-onboard <quickstart-name>`?** You're in the right place. The name is one of the templates on the Console's quickstart page, kept one per file in `shared/managed-agents-quickstarts/`. This flow builds the same agent, asks what the Console asks, in the same order, and does it with files under `agents/` and the `ant` CLI. A URL after the subcommand -> `shared/managed-agents-onboarding-from-url.md`. Nothing, or a description that fits no template -> `shared/managed-agents-onboarding.md`.
 
 **This guide holds the questions. `shared/managed-agents-onboarding-from-url.md` holds the mechanics**: §3 the proposal checklist, §4 the file layout and `ant apply` filename rules, §5 apply, credentials, pause and smoke test, §6 hand-off. Read it too; "from-url §N" below points there. Same floor: **`ant` 1.34.0 or later**, and on Claude Platform on AWS stop and use the SDK fallback it names.
 
